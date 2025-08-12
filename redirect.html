@@ -10,6 +10,7 @@
       margin: 0;
       padding: 20px;
       background: #f5f5f5;
+      color: #333;
     }
     .container {
       max-width: 800px;
@@ -29,6 +30,19 @@
       color: #ff4444;
       margin: 1rem 0;
     }
+    .progress-container {
+      height: 8px;
+      background: #e0e0e0;
+      margin: 2rem 0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4d90fe, #2a75d9);
+      width: 0%;
+      transition: width 2.3s linear;
+    }
     .ad-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -44,6 +58,13 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      border: 1px solid #eee;
+    }
+    .error-message {
+      color: #ff4444;
+      font-size: 1.2rem;
+      text-align: center;
+      margin-top: 2rem;
     }
   </style>
 </head>
@@ -52,83 +73,119 @@
     <div class="countdown-card">
       <h1>Redirecting...</h1>
       <div class="countdown" id="countdown">10</div>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
       <p>You will be automatically redirected in <span id="countdown-text">10</span> seconds</p>
     </div>
 
     <div class="ad-grid" id="ad-container">
       <!-- Ad slots will be inserted here -->
     </div>
+
+    <div id="error-message" class="error-message"></div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Configuration
-      const totalAds = 10;
-      const countdownStart = 10;
-      const countdownInterval = 2300; // 2.3 seconds per count
-      
+      const CONFIG = {
+        totalAds: 10,
+        countdownStart: 10,
+        countdownSeconds: 23,
+        adLoadDelay: 300
+      };
+
+      // Ad configuration
+      const AD = {
+        scriptSrc: "//breathinggeoff.com/1b21a7aeb6541a8c010585f476d4919d/invoke.js",
+        containerPrefix: "container-1b21a7aeb6541a8c010585f476d4919d"
+      };
+
       // Get URL parameter
       const urlParams = new URLSearchParams(window.location.search);
       const targetUrl = urlParams.get('url');
       
       if (!targetUrl) {
-        alert('Error: Missing URL parameter');
+        showError("❌ Error: Missing URL parameter");
         return;
       }
 
-      // Initialize countdown
+      // Initialize elements
       const countdownEl = document.getElementById('countdown');
       const countdownText = document.getElementById('countdown-text');
-      let count = countdownStart;
-      
-      // Load all ads
-      loadAds(totalAds);
-      
-      // Start countdown timer
-      const timer = setInterval(() => {
-        count--;
-        countdownEl.textContent = count;
-        countdownText.textContent = count;
+      const progressBar = document.getElementById('progress-bar');
+      const adContainer = document.getElementById('ad-container');
+      const errorEl = document.getElementById('error-message');
+
+      // Start countdown
+      startCountdown();
+
+      // Load ads
+      loadAds();
+
+      function startCountdown() {
+        const startTime = Date.now();
+        const endTime = startTime + (CONFIG.countdownSeconds * 1000);
         
-        if (count <= 0) {
-          clearInterval(timer);
-          try {
-            window.location.href = decodeURIComponent(targetUrl);
-          } catch {
-            alert('Error: Invalid URL');
+        // Start progress bar animation
+        progressBar.style.width = '100%';
+        
+        function update() {
+          const now = Date.now();
+          const remaining = Math.max(0, endTime - now);
+          const secondsLeft = Math.ceil(remaining / 1000);
+          const progress = 1 - (remaining / (CONFIG.countdownSeconds * 1000));
+          
+          countdownEl.textContent = secondsLeft;
+          countdownText.textContent = secondsLeft;
+          
+          if (remaining > 0) {
+            requestAnimationFrame(update);
+          } else {
+            redirectToTarget();
           }
         }
-      }, countdownInterval);
+        
+        update();
+      }
 
-      // Ad loading function
-      function loadAds(total) {
-        const adContainer = document.getElementById('ad-container');
-        const adCode = {
-          scriptSrc: '//breathinggeoff.com/1b21a7aeb6541a8c010585f476d4919d/invoke.js',
-          containerId: 'container-1b21a7aeb6541a8c010585f476d4919d'
-        };
-
-        // Create all ad slots
-        for (let i = 0; i < total; i++) {
+      function loadAds() {
+        // Create all ad containers first
+        for (let i = 0; i < CONFIG.totalAds; i++) {
           const adSlot = document.createElement('div');
           adSlot.className = 'ad-slot';
           adSlot.innerHTML = `
             <div>Advertisement ${i+1}</div>
-            <div id="${adCode.containerId}-${i}"></div>
+            <div id="${AD.containerPrefix}-${i}"></div>
           `;
           adContainer.appendChild(adSlot);
         }
 
-        // Load ad scripts
-        for (let i = 0; i < total; i++) {
+        // Then load scripts with delay
+        for (let i = 0; i < CONFIG.totalAds; i++) {
           setTimeout(() => {
             const script = document.createElement('script');
             script.async = true;
             script.dataset.cfasync = 'false';
-            script.src = adCode.scriptSrc;
+            script.src = AD.scriptSrc;
             document.head.appendChild(script);
-          }, i * 300); // Stagger loading
+          }, i * CONFIG.adLoadDelay);
         }
+      }
+
+      function redirectToTarget() {
+        try {
+          const decodedUrl = decodeURIComponent(targetUrl);
+          new URL(decodedUrl); // Validate URL
+          window.location.href = decodedUrl;
+        } catch (e) {
+          showError("❌ Error: Invalid URL format");
+        }
+      }
+
+      function showError(message) {
+        errorEl.textContent = message;
       }
     });
   </script>
