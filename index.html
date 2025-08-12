@@ -1,204 +1,179 @@
 <!DOCTYPE html>
 <!-- 
-  Redirect page with 10 auto-loading ads and countdown
-  Host with index.html in same directory
+  URL Link Generator - Creates redirect links to redirect.html
+  Host together with redirect.html in same directory
 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redirecting...</title>
+  <title>URL Link Generator</title>
   <style>
     * {
       box-sizing: border-box;
       font-family: system-ui, -apple-system, sans-serif;
-      margin: 0;
-      padding: 0;
     }
     body {
-      background-color: #f5f5f5;
-      color: #333;
-      display: flex;
-      flex-direction: column;
+      margin: 0;
+      padding: 20px;
       min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f5f5f5;
     }
-    .countdown-container {
+    .card {
       background: white;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin: 20px auto;
       padding: 2rem;
-      text-align: center;
-      width: 90%;
+      width: 100%;
       max-width: 500px;
     }
-    .countdown {
-      font-size: 3rem;
-      font-weight: bold;
-      color: #ff4444;
-      margin: 1rem 0;
-    }
-    .progress-container {
-      height: 6px;
-      background: #e0e0e0;
-      margin: 1.5rem 0;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #4d90fe, #2a75d9);
-      width: 0%;
-      transition: width 0.5s linear;
-    }
-    .ads-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1rem;
-      padding: 1rem;
-      width: 100%;
-      margin: 0 auto;
-    }
-    .ad-slot {
-      background: white;
-      border-radius: 8px;
-      padding: 1rem;
-      min-height: 250px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      border: 1px solid #eee;
-    }
-    .ad-label {
-      font-size: 0.8rem;
-      color: #999;
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-    }
-    .error-message {
-      text-align: center;
+    h1 {
+      margin-top: 0;
+      color: #333;
       font-size: 1.5rem;
-      padding: 2rem;
-      color: #ff4444;
-      background: white;
-      margin: 1rem;
-      border-radius: 8px;
     }
-    @media (max-width: 600px) {
-      .countdown-container {
-        padding: 1.5rem;
-        margin: 1rem auto;
-      }
-      .ads-container {
-        grid-template-columns: 1fr;
-      }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    input:read-only {
+      background-color: #f9f9f9;
+      cursor: not-allowed;
+    }
+    .button-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    button {
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      flex: 1;
+      transition: background 0.2s;
+    }
+    button:focus {
+      outline: 2px solid #4d90fe;
+    }
+    .primary {
+      background-color: #4d90fe;
+      color: white;
+    }
+    .primary:hover {
+      background-color: #357ae8;
+    }
+    .secondary {
+      background-color: #f1f1f1;
+    }
+    .secondary:hover {
+      background-color: #e1e1e1;
+    }
+    .help-text {
+      font-size: 0.875rem;
+      color: #666;
+      margin: 1rem 0 0;
+      padding: 0.5rem;
+      background-color: #f8f8f8;
+      border-radius: 4px;
+    }
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="countdown-container">
-    <h1>Redirecting to Your Destination</h1>
-    <p>Please wait while we prepare your link...</p>
-    <div class="countdown" id="countdown">10</div>
-    <div class="progress-container">
-      <div class="progress-bar" id="progress-bar"></div>
+  <div class="card">
+    <h1>URL Link Generator</h1>
+    
+    <label for="original-url">Enter URL to shorten:</label>
+    <input type="url" id="original-url" placeholder="https://example.com" required>
+    
+    <button id="generate-btn" class="primary">Generate Link</button>
+    
+    <div id="result-container" class="hidden">
+      <label for="generated-link">Your redirect link:</label>
+      <input type="text" id="generated-link" readonly>
+      
+      <div class="button-group">
+        <button id="copy-btn" class="secondary">Copy</button>
+        <button id="open-btn" class="secondary">Open</button>
+      </div>
     </div>
+    
+    <p class="help-text">
+      Tip: Include "http://" or "https://" in your URL. The generated link will redirect through our service.
+    </p>
   </div>
 
-  <div class="ads-container" id="ads-container"></div>
-
   <script>
-    // Configuration
-    const CONFIG = {
-      countdownStart: 10,
-      totalTime: 23000, // 23 seconds total
-      totalAds: 10,
-      adDelay: 200 // ms between ad injections
-    };
-
-    // Ad configuration
-    const AD_CODE = {
-      scriptSrc: "//breathinggeoff.com/5f30fff3bb556620e90e0610b7982216/invoke.js",
-      containerId: "container-5f30fff3bb556620e90e0610b7982216"
-    };
-
     document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const targetUrl = urlParams.get('url');
+      const originalUrlInput = document.getElementById('original-url');
+      const generateBtn = document.getElementById('generate-btn');
+      const resultContainer = document.getElementById('result-container');
+      const generatedLinkInput = document.getElementById('generated-link');
+      const copyBtn = document.getElementById('copy-btn');
+      const openBtn = document.getElementById('open-btn');
+
+      generateBtn.addEventListener('click', generateLink);
+      copyBtn.addEventListener('click', copyLink);
+      openBtn.addEventListener('click', openLink);
       
-      if (!targetUrl) {
-        showError();
-        return;
-      }
+      // Allow pressing Enter in input to generate
+      originalUrlInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') generateLink();
+      });
 
-      // Initialize elements
-      const countdownEl = document.getElementById('countdown');
-      const progressBar = document.getElementById('progress-bar');
-      const adsContainer = document.getElementById('ads-container');
-      let startTime = Date.now();
-      let animationFrame;
-
-      // Start smooth countdown
-      function updateCountdown() {
-        const elapsed = Date.now() - startTime;
-        const remaining = Math.max(0, CONFIG.totalTime - elapsed);
-        const progress = elapsed / CONFIG.totalTime;
+      function generateLink() {
+        const url = originalUrlInput.value.trim();
         
-        // Update countdown display
-        const currentCount = Math.ceil(CONFIG.countdownStart - (progress * CONFIG.countdownStart));
-        countdownEl.textContent = currentCount > 0 ? currentCount : 0;
-        progressBar.style.width = `${Math.min(100, progress * 100)}%`;
-        
-        if (remaining <= 0) {
-          cancelAnimationFrame(animationFrame);
-          redirectToTarget();
-        } else {
-          animationFrame = requestAnimationFrame(updateCountdown);
-        }
-      }
-
-      // Start the countdown
-      animationFrame = requestAnimationFrame(updateCountdown);
-
-      // Load all ads immediately
-      loadAllAds();
-
-      function redirectToTarget() {
         try {
-          const decodedUrl = decodeURIComponent(targetUrl);
-          new URL(decodedUrl); // Validate URL
-          window.location.href = decodedUrl;
+          // Validate URL
+          new URL(url);
+          
+          // Encode for URL parameter
+          const encodedUrl = encodeURIComponent(url);
+          const redirectUrl = `redirect.html?url=${encodedUrl}`;
+          
+          // Show result
+          generatedLinkInput.value = window.location.href.replace('index.html', redirectUrl);
+          resultContainer.classList.remove('hidden');
+          generatedLinkInput.select();
         } catch (e) {
-          showError();
+          if (confirm('This doesn\'t look like a valid URL. Generate anyway?')) {
+            const encodedUrl = encodeURIComponent(url);
+            const redirectUrl = `redirect.html?url=${encodedUrl}`;
+            generatedLinkInput.value = window.location.href.replace('index.html', redirectUrl);
+            resultContainer.classList.remove('hidden');
+            generatedLinkInput.select();
+          }
         }
       }
 
-      function showError() {
-        document.body.innerHTML = '<div class="error-message">❌ Error: Invalid or missing URL parameter</div>';
+      function copyLink() {
+        generatedLinkInput.select();
+        document.execCommand('copy');
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy';
+        }, 2000);
       }
 
-      function loadAllAds() {
-        for (let i = 0; i < CONFIG.totalAds; i++) {
-          setTimeout(() => {
-            const adSlot = document.createElement('div');
-            adSlot.className = 'ad-slot';
-            adSlot.innerHTML = `
-              <div class="ad-label">Advertisement</div>
-              <div id="${AD_CODE.containerId}-${i}"></div>
-            `;
-            
-            adsContainer.appendChild(adSlot);
-            
-            // Create and append script
-            const script = document.createElement('script');
-            script.async = true;
-            script.dataset.cfasync = 'false';
-            script.src = AD_CODE.scriptSrc;
-            adSlot.appendChild(script);
-          }, i * CONFIG.adDelay);
-        }
+      function openLink() {
+        window.open(generatedLinkInput.value, '_blank');
       }
     });
   </script>
