@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!-- 
+  Redirect page with 10 auto-loading ads and countdown
+  Host with index.html in same directory
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #f5f5f5;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .countdown-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      padding: 2rem;
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+    }
+    .countdown {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #ff4444;
+      margin: 1rem 0;
+    }
+    .progress-container {
+      height: 6px;
+      background: #e0e0e0;
+      margin: 1.5rem 0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4d90fe, #2a75d9);
+      width: 0%;
+      transition: width 0.5s linear;
+    }
+    .ads-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .ad-slot {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      min-height: 250px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      border: 1px solid #eee;
+    }
+    .ad-label {
+      font-size: 0.8rem;
+      color: #999;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+    .error-message {
+      text-align: center;
+      font-size: 1.5rem;
+      padding: 2rem;
+      color: #ff4444;
+      background: white;
+      margin: 1rem;
+      border-radius: 8px;
+    }
+    @media (max-width: 600px) {
+      .countdown-container {
+        padding: 1.5rem;
+        margin: 1rem auto;
+      }
+      .ads-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="countdown-container">
+    <h1>Redirecting to Your Destination</h1>
+    <p>Please wait while we prepare your link...</p>
+    <div class="countdown" id="countdown">10</div>
+    <div class="progress-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+  </div>
+
+  <div class="ads-container" id="ads-container"></div>
+
+  <script>
+    // Configuration
+    const CONFIG = {
+      countdownStart: 10,
+      totalTime: 23000, // 23 seconds total
+      totalAds: 10,
+      adDelay: 200 // ms between ad injections
+    };
+
+    // Ad configuration
+    const AD_CODE = {
+      scriptSrc: "//breathinggeoff.com/5f30fff3bb556620e90e0610b7982216/invoke.js",
+      containerId: "container-5f30fff3bb556620e90e0610b7982216"
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetUrl = urlParams.get('url');
+      
+      if (!targetUrl) {
+        showError();
+        return;
+      }
+
+      // Initialize elements
+      const countdownEl = document.getElementById('countdown');
+      const progressBar = document.getElementById('progress-bar');
+      const adsContainer = document.getElementById('ads-container');
+      let startTime = Date.now();
+      let animationFrame;
+
+      // Start smooth countdown
+      function updateCountdown() {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, CONFIG.totalTime - elapsed);
+        const progress = elapsed / CONFIG.totalTime;
+        
+        // Update countdown display
+        const currentCount = Math.ceil(CONFIG.countdownStart - (progress * CONFIG.countdownStart));
+        countdownEl.textContent = currentCount > 0 ? currentCount : 0;
+        progressBar.style.width = `${Math.min(100, progress * 100)}%`;
+        
+        if (remaining <= 0) {
+          cancelAnimationFrame(animationFrame);
+          redirectToTarget();
+        } else {
+          animationFrame = requestAnimationFrame(updateCountdown);
+        }
+      }
+
+      // Start the countdown
+      animationFrame = requestAnimationFrame(updateCountdown);
+
+      // Load all ads immediately
+      loadAllAds();
+
+      function redirectToTarget() {
+        try {
+          const decodedUrl = decodeURIComponent(targetUrl);
+          new URL(decodedUrl); // Validate URL
+          window.location.href = decodedUrl;
+        } catch (e) {
+          showError();
+        }
+      }
+
+      function showError() {
+        document.body.innerHTML = '<div class="error-message">❌ Error: Invalid or missing URL parameter</div>';
+      }
+
+      function loadAllAds() {
+        for (let i = 0; i < CONFIG.totalAds; i++) {
+          setTimeout(() => {
+            const adSlot = document.createElement('div');
+            adSlot.className = 'ad-slot';
+            adSlot.innerHTML = `
+              <div class="ad-label">Advertisement</div>
+              <div id="${AD_CODE.containerId}-${i}"></div>
+            `;
+            
+            adsContainer.appendChild(adSlot);
+            
+            // Create and append script
+            const script = document.createElement('script');
+            script.async = true;
+            script.dataset.cfasync = 'false';
+            script.src = AD_CODE.scriptSrc;
+            adSlot.appendChild(script);
+          }, i * CONFIG.adDelay);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
