@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<!-- 
+  Link Generator - Creates redirect links to redirect.html
+  Host this with redirect.html in same directory
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickLink - URL Shortener</title>
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --border-radius: 12px;
+      --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 3rem;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    h1 {
+      color: var(--primary);
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e9ecef;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      width: 100%;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .result {
+      margin-top: 2rem;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>URL Shortener</h1>
+    <div class="form-group">
+      <label for="url">Enter URL to shorten:</label>
+      <input type="url" id="url" placeholder="https://example.com" required>
+    </div>
+    <button id="generate" class="btn">Generate Link</button>
+    
+    <div class="result" id="result">
+      <div class="form-group">
+        <label for="generated-url">Your redirect link:</label>
+        <input type="text" id="generated-url" readonly>
+        <div class="button-group">
+          <button id="copy" class="btn btn-secondary">Copy</button>
+          <button id="open" class="btn">Open</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlInput = document.getElementById('url');
+      const generateBtn = document.getElementById('generate');
+      const resultDiv = document.getElementById('result');
+      const generatedUrl = document.getElementById('generated-url');
+      const copyBtn = document.getElementById('copy');
+      const openBtn = document.getElementById('open');
+      
+      generateBtn.addEventListener('click', () => {
+        try {
+          let inputUrl = urlInput.value.trim();
+          
+          // Add https:// if missing
+          if (!inputUrl.startsWith('http://') && !inputUrl.startsWith('https://')) {
+            inputUrl = 'https://' + inputUrl;
+          }
+          
+          // Validate URL
+          new URL(inputUrl);
+          
+          // Get current domain path
+          const currentPath = window.location.href.split('/').slice(0, 3).join('/');
+          
+          // Create redirect URL
+          const encodedUrl = encodeURIComponent(inputUrl);
+          const redirectLink = `${currentPath}/redirect.html?url=${encodedUrl}`;
+          
+          generatedUrl.value = redirectLink;
+          resultDiv.style.display = 'block';
+          
+        } catch (e) {
+          const shouldProceed = confirm('Invalid URL. Generate anyway?');
+          if (shouldProceed) {
+            const encodedUrl = encodeURIComponent(urlInput.value);
+            const currentPath = window.location.href.split('/').slice(0, 3).join('/');
+            generatedUrl.value = `${currentPath}/redirect.html?url=${encodedUrl}`;
+            resultDiv.style.display = 'block';
+          }
+        }
+      });
+      
+      copyBtn.addEventListener('click', () => {
+        generatedUrl.select();
+        document.execCommand('copy');
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => copyBtn.textContent = 'Copy', 2000);
+      });
+      
+      openBtn.addEventListener('click', () => {
+        window.open(generatedUrl.value, '_blank');
+      });
+    });
+  </script>
+</body>
+</html>
