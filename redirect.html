@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: #f5f5f5;
+      text-align: center;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 90%;
+    }
+    .countdown {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #ff4444;
+      margin: 1rem 0;
+    }
+    .progress-container {
+      height: 8px;
+      background: #e0e0e0;
+      margin: 2rem 0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: #4d90fe;
+      width: 0%;
+      transition: width 2.3s linear;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Redirecting...</h1>
+    <div class="countdown" id="countdown">10</div>
+    <div class="progress-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <p>Please wait while we redirect you</p>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetUrl = urlParams.get('url');
+      
+      if (!targetUrl) {
+        alert('Error: Missing URL parameter');
+        return;
+      }
+
+      const countdownEl = document.getElementById('countdown');
+      const progressBar = document.getElementById('progress-bar');
+      let count = 10;
+      
+      // Start progress bar animation
+      progressBar.style.width = '100%';
+      
+      // Update countdown every 2.3 seconds
+      const timer = setInterval(() => {
+        count--;
+        countdownEl.textContent = count;
+        
+        if (count <= 0) {
+          clearInterval(timer);
+          try {
+            window.location.href = decodeURIComponent(targetUrl);
+          } catch {
+            alert('Error: Invalid URL');
+          }
+        }
+      }, 2300); // 2.3 seconds per count
+    });
+  </script>
+</body>
+</html>
