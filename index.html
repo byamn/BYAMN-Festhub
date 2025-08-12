@@ -1,1 +1,244 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aman Singh - Portfolio</title>
+  <style>
+    /* Basic Reset */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f0f0f0;
+      color: #222;
+      transition: background-color 0.3s, color 0.3s;
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header img {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      border: 3px solid #555;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 0.2rem;
+    }
+
+    h2 {
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+
+    section {
+      max-width: 900px;
+      margin: 0 auto 3rem;
+    }
+
+    .skills ul,
+    .projects ul {
+      list-style-type: none;
+      padding-left: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skills li,
+    .projects li {
+      background-color: #ddd;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: 600;
+      color: #333;
+      cursor: default;
+      user-select: none;
+      transition: background-color 0.3s;
+    }
+
+    .projects li {
+      background-color: #f9f9f9;
+      flex-direction: column;
+      width: 100%;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .projects li a {
+      text-decoration: none;
+      color: #0b79ce;
+      font-weight: 700;
+    }
+
+    .projects li a:hover {
+      text-decoration: underline;
+    }
+
+    .project-desc {
+      margin-top: 6px;
+      color: #444;
+      font-weight: 400;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 4rem;
+    }
+
+    /* Dark mode styles */
+    body.dark {
+      background-color: #121212;
+      color: #eee;
+    }
+    body.dark header img {
+      border-color: #bbb;
+    }
+    body.dark .skills li,
+    body.dark .projects li {
+      background-color: #333;
+      color: #eee;
+      border-color: #555;
+    }
+    body.dark .projects li a {
+      color: #66aaff;
+    }
+
+    /* Toggle button */
+    #mode-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #0b79ce;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+      transition: background-color 0.3s;
+      z-index: 100;
+    }
+    #mode-toggle:hover {
+      background-color: #095a9d;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .skills ul,
+      .projects ul {
+        flex-direction: column;
+      }
+      .projects li {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <button id="mode-toggle">Dark Mode</button>
+
+  <header>
+    <img src="https://i.pravatar.cc/140?img=5" alt="Aman Singh" />
+    <h1>Aman Singh</h1>
+    <h2>Full Stack Developer & Content Creator</h2>
+  </header>
+
+  <section class="about">
+    <h2>About Me</h2>
+    <p>
+      Hi! I’m Aman Singh, a passionate developer with experience in building web applications,
+      creating content, and exploring AI tools. I love coding, learning new technologies, and
+      sharing knowledge with others.
+    </p>
+  </section>
+
+  <section class="skills">
+    <h2>Skills</h2>
+    <ul>
+      <li>HTML</li>
+      <li>CSS</li>
+      <li>JavaScript</li>
+      <li>React</li>
+      <li>Node.js</li>
+      <li>Python</li>
+      <li>AI Tools</li>
+    </ul>
+  </section>
+
+  <section class="projects">
+    <h2>Projects</h2>
+    <ul>
+      <li>
+        <a href="https://github.com/aman/project-portfolio" target="_blank" rel="noopener">Personal Portfolio Website</a>
+        <p class="project-desc">A responsive portfolio website built using HTML, CSS, and JavaScript with dark mode support.</p>
+      </li>
+      <li>
+        <a href="https://github.com/aman/ai-blog" target="_blank" rel="noopener">AI Blog Generator</a>
+        <p class="project-desc">A tool that generates blog posts on AI topics using GPT-based models with SEO optimization.</p>
+      </li>
+      <li>
+        <a href="https://github.com/aman/chat-app" target="_blank" rel="noopener">Real-time Chat Application</a>
+        <p class="project-desc">A real-time chat application built with Node.js and Socket.IO, featuring group chat and direct messages.</p>
+      </li>
+    </ul>
+  </section>
+
+  <section class="contact">
+    <h2>Contact Me</h2>
+    <p>Email: <a href="mailto:aman.singh@example.com">aman.singh@example.com</a></p>
+    <p>Phone: +91 9876543210</p>
+    <p>
+      Social: 
+      <a href="https://linkedin.com/in/aman-singh" target="_blank" rel="noopener">LinkedIn</a> | 
+      <a href="https://github.com/aman" target="_blank" rel="noopener">GitHub</a> | 
+      <a href="https://twitter.com/aman" target="_blank" rel="noopener">Twitter</a>
+    </p>
+  </section>
+
+  <footer>
+    &copy; 2025 Aman Singh. All rights reserved.
+  </footer>
+
+  <script>
+    const toggleBtn = document.getElementById('mode-toggle');
+    const body = document.body;
+
+    // Load saved mode from localStorage
+    if(localStorage.getItem('mode') === 'dark') {
+      body.classList.add('dark');
+      toggleBtn.textContent = 'Light Mode';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      if(body.classList.contains('dark')) {
+        toggleBtn.textContent = 'Light Mode';
+        localStorage.setItem('mode', 'dark');
+      } else {
+        toggleBtn.textContent = 'Dark Mode';
+        localStorage.setItem('mode', 'light');
+      }
+    });
+  </script>
+</body>
+</html>
