@@ -1,178 +1,180 @@
 <!DOCTYPE html>
+<!-- 
+  Redirect page with ads countdown - Requires url parameter
+  Host together with index.html in same directory
+  Ad scripts are dynamically inserted for execution
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Redirecting...</title>
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
-      background: #f5f5f5;
+      padding: 0;
+      background-color: #f5f5f5;
       color: #333;
     }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
+    .header {
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     .countdown-card {
       background: white;
-      padding: 2rem;
-      border-radius: 10px;
+      border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 500px;
       text-align: center;
     }
     .countdown {
-      font-size: 4rem;
+      font-size: 3rem;
       font-weight: bold;
       color: #ff4444;
       margin: 1rem 0;
     }
     .progress-container {
-      height: 8px;
+      height: 4px;
       background: #e0e0e0;
-      margin: 2rem 0;
-      border-radius: 4px;
-      overflow: hidden;
+      margin: 1rem 0;
+      border-radius: 2px;
     }
     .progress-bar {
       height: 100%;
-      background: linear-gradient(90deg, #4d90fe, #2a75d9);
+      background: #4d90fe;
+      border-radius: 2px;
       width: 0%;
-      transition: width 2.3s linear;
+      transition: width 0.3s;
+    }
+    .skip-btn {
+      color: #4d90fe;
+      text-decoration: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .skip-btn:hover {
+      text-decoration: underline;
     }
     .ad-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
+      gap: 1rem;
+      padding: 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
     }
     .ad-slot {
       background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-radius: 4px;
+      padding: 1rem;
       min-height: 250px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      border: 1px solid #eee;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .ad-label {
+      font-size: 0.75rem;
+      color: #999;
+      margin-bottom: 0.5rem;
+    }
+    .sticky-ad {
+      position: sticky;
+      bottom: 0;
+      background: white;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
     }
     .error-message {
-      color: #ff4444;
-      font-size: 1.2rem;
       text-align: center;
-      margin-top: 2rem;
+      font-size: 1.5rem;
+      padding: 2rem;
+      color: #ff4444;
+    }
+    @media (max-width: 600px) {
+      .ad-grid {
+        grid-template-columns: 1fr;
+      }
+      .countdown-card {
+        margin: 1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="countdown-card">
-      <h1>Redirecting...</h1>
-      <div class="countdown" id="countdown">10</div>
-      <div class="progress-container">
-        <div class="progress-bar" id="progress-bar"></div>
-      </div>
-      <p>You will be automatically redirected in <span id="countdown-text">10</span> seconds</p>
-    </div>
-
-    <div class="ad-grid" id="ad-container">
-      <!-- Ad slots will be inserted here -->
-    </div>
-
-    <div id="error-message" class="error-message"></div>
+  <div class="header">
+    <div class="ad-slot" id="sticky-top-ad"></div>
   </div>
 
+  <div class="countdown-card">
+    <h1>Redirecting to your link...</h1>
+    <div class="countdown" id="countdown">10</div>
+    <div class="progress-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <a class="skip-btn" id="skip-btn">Skip now</a>
+  </div>
+
+  <div class="ad-grid" id="ad-grid"></div>
+
+  <div class="sticky-ad" id="sticky-bottom-ad"></div>
+
   <script>
+    // Configuration
+    const CONFIG = {
+      countdownStart: 10,
+      countdownStep: 2.3, // seconds
+      totalAds: 20
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
-      // Configuration
-      const CONFIG = {
-        totalAds: 10,
-        countdownStart: 10,
-        countdownSeconds: 23,
-        adLoadDelay: 300
-      };
-
-      // Ad configuration
-      const AD = {
-        scriptSrc: "//breathinggeoff.com/1b21a7aeb6541a8c010585f476d4919d/invoke.js",
-        containerPrefix: "container-1b21a7aeb6541a8c010585f476d4919d"
-      };
-
-      // Get URL parameter
       const urlParams = new URLSearchParams(window.location.search);
       const targetUrl = urlParams.get('url');
       
       if (!targetUrl) {
-        showError("❌ Error: Missing URL parameter");
+        showError();
         return;
       }
 
-      // Initialize elements
+      // Initialize
       const countdownEl = document.getElementById('countdown');
-      const countdownText = document.getElementById('countdown-text');
+      const skipBtn = document.getElementById('skip-btn');
       const progressBar = document.getElementById('progress-bar');
-      const adContainer = document.getElementById('ad-container');
-      const errorEl = document.getElementById('error-message');
-
-      // Start countdown
-      startCountdown();
+      let countdown = CONFIG.countdownStart;
+      let totalTime = CONFIG.countdownStart * CONFIG.countdownStep * 1000;
+      let elapsed = 0;
 
       // Load ads
       loadAds();
 
-      function startCountdown() {
-        const startTime = Date.now();
-        const endTime = startTime + (CONFIG.countdownSeconds * 1000);
+      // Countdown timer
+      const timer = setInterval(() => {
+        countdown--;
+        elapsed += CONFIG.countdownStep * 1000;
         
-        // Start progress bar animation
-        progressBar.style.width = '100%';
+        countdownEl.textContent = countdown;
+        progressBar.style.width = `${(elapsed / totalTime) * 100}%`;
         
-        function update() {
-          const now = Date.now();
-          const remaining = Math.max(0, endTime - now);
-          const secondsLeft = Math.ceil(remaining / 1000);
-          const progress = 1 - (remaining / (CONFIG.countdownSeconds * 1000));
-          
-          countdownEl.textContent = secondsLeft;
-          countdownText.textContent = secondsLeft;
-          
-          if (remaining > 0) {
-            requestAnimationFrame(update);
-          } else {
-            redirectToTarget();
-          }
+        if (countdown <= 0) {
+          clearInterval(timer);
+          redirectToTarget();
         }
-        
-        update();
-      }
+      }, CONFIG.countdownStep * 1000);
 
-      function loadAds() {
-        // Create all ad containers first
-        for (let i = 0; i < CONFIG.totalAds; i++) {
-          const adSlot = document.createElement('div');
-          adSlot.className = 'ad-slot';
-          adSlot.innerHTML = `
-            <div>Advertisement ${i+1}</div>
-            <div id="${AD.containerPrefix}-${i}"></div>
-          `;
-          adContainer.appendChild(adSlot);
-        }
-
-        // Then load scripts with delay
-        for (let i = 0; i < CONFIG.totalAds; i++) {
-          setTimeout(() => {
-            const script = document.createElement('script');
-            script.async = true;
-            script.dataset.cfasync = 'false';
-            script.src = AD.scriptSrc;
-            document.head.appendChild(script);
-          }, i * CONFIG.adLoadDelay);
-        }
-      }
+      // Skip button
+      skipBtn.addEventListener('click', redirectToTarget);
 
       function redirectToTarget() {
         try {
@@ -180,12 +182,57 @@
           new URL(decodedUrl); // Validate URL
           window.location.href = decodedUrl;
         } catch (e) {
-          showError("❌ Error: Invalid URL format");
+          showError();
         }
       }
 
-      function showError(message) {
-        errorEl.textContent = message;
+      function showError() {
+        document.body.innerHTML = '<div class="error-message">❌ Error: No URL found!</div>';
+      }
+
+      function loadAds() {
+        const adGrid = document.getElementById('ad-grid');
+        const stickyTop = document.getElementById('sticky-top-ad');
+        const stickyBottom = document.getElementById('sticky-bottom-ad');
+        
+        // Create ad slots
+        for (let i = 0; i < CONFIG.totalAds; i++) {
+          const adSlot = document.createElement('div');
+          adSlot.className = 'ad-slot';
+          adSlot.innerHTML = `<div class="ad-label">Advertisement</div>`;
+          
+          // Create script element
+          const script = document.createElement('script');
+          script.async = true;
+          script.dataset.cfasync = 'false';
+          script.src = '//breathinggeoff.com/1b21a7aeb6541a8c010585f476d4919d/invoke.js';
+          
+          // Create container div
+          const container = document.createElement('div');
+          container.id = `container-1b21a7aeb6541a8c010585f476d4919d-${i}`;
+          
+          adSlot.appendChild(container);
+          adSlot.appendChild(script);
+          adGrid.appendChild(adSlot);
+        }
+        
+        // Add sticky ads (optional)
+        addStickyAd(stickyTop);
+        addStickyAd(stickyBottom);
+      }
+      
+      function addStickyAd(container) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.dataset.cfasync = 'false';
+        script.src = '//breathinggeoff.com/1b21a7aeb6541a8c010585f476d4919d/invoke.js';
+        
+        const adDiv = document.createElement('div');
+        adDiv.id = `container-1b21a7aeb6541a8c010585f476d4919d-sticky`;
+        adDiv.style.width = '100%';
+        
+        container.appendChild(adDiv);
+        container.appendChild(script);
       }
     });
   </script>
