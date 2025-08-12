@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <!-- 
-  Redirect page with ads countdown - Requires url parameter
-  Host together with index.html in same directory
-  Ad scripts are dynamically inserted for execution
+  Redirect page - Shows ads and counts down before redirecting
+  Requires 'url' query parameter with encoded target URL
+  Host with index.html in same directory
 -->
 <html lang="en">
 <head>
@@ -10,56 +10,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Redirecting...</title>
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, sans-serif;
-    }
     body {
+      font-family: system-ui, -apple-system, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f5f5f5;
+      background: #f5f5f5;
       color: #333;
     }
     .header {
       background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 1rem;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      margin-bottom: 30px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
     .countdown-card {
       background: white;
-      border-radius: 8px;
+      border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      padding: 2rem;
-      margin: 2rem auto;
+      padding: 30px;
       max-width: 500px;
+      margin: 0 auto 30px;
       text-align: center;
     }
     .countdown {
       font-size: 3rem;
       font-weight: bold;
       color: #ff4444;
-      margin: 1rem 0;
-    }
-    .progress-container {
-      height: 4px;
-      background: #e0e0e0;
-      margin: 1rem 0;
-      border-radius: 2px;
+      margin: 10px 0;
     }
     .progress-bar {
+      height: 5px;
+      background: #eee;
+      border-radius: 5px;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+    .progress {
       height: 100%;
-      background: #4d90fe;
-      border-radius: 2px;
+      background: #4a6bff;
       width: 0%;
       transition: width 0.3s;
     }
     .skip-btn {
-      color: #4d90fe;
+      display: inline-block;
+      margin-top: 15px;
+      color: #4a6bff;
       text-decoration: none;
-      font-size: 0.9rem;
+      font-weight: 500;
       cursor: pointer;
     }
     .skip-btn:hover {
@@ -68,68 +69,57 @@
     .ad-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
-      padding: 1rem;
+      gap: 20px;
+      padding: 20px;
       max-width: 1200px;
       margin: 0 auto;
     }
     .ad-slot {
       background: white;
-      border-radius: 4px;
-      padding: 1rem;
+      border-radius: 5px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       min-height: 250px;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .ad-label {
-      font-size: 0.75rem;
-      color: #999;
-      margin-bottom: 0.5rem;
+      align-items: center;
     }
     .sticky-ad {
       position: sticky;
       bottom: 0;
       background: white;
-      padding: 1rem;
+      padding: 10px;
       text-align: center;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      z-index: 100;
     }
-    .error-message {
-      text-align: center;
-      font-size: 1.5rem;
-      padding: 2rem;
-      color: #ff4444;
-    }
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       .ad-grid {
         grid-template-columns: 1fr;
-      }
-      .countdown-card {
-        margin: 1rem;
       }
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <div class="ad-slot" id="sticky-top-ad"></div>
+    <!-- Optional sticky header ad placeholder -->
   </div>
 
   <div class="countdown-card">
     <h1>Redirecting to your link...</h1>
     <div class="countdown" id="countdown">10</div>
-    <div class="progress-container">
-      <div class="progress-bar" id="progress-bar"></div>
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
     </div>
-    <a class="skip-btn" id="skip-btn">Skip now</a>
+    <a class="skip-btn" id="skip">Skip now</a>
   </div>
 
-  <div class="ad-grid" id="ad-grid"></div>
+  <div class="ad-grid" id="adGrid"></div>
 
-  <div class="sticky-ad" id="sticky-bottom-ad"></div>
+  <div class="sticky-ad">
+    <!-- Optional sticky footer ad placeholder -->
+  </div>
 
   <script>
     // Configuration
@@ -140,99 +130,70 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const targetUrl = urlParams.get('url');
+      const params = new URLSearchParams(window.location.search);
+      const encodedUrl = params.get('url');
+      let targetUrl = '';
       
-      if (!targetUrl) {
-        showError();
+      try {
+        if (encodedUrl) {
+          targetUrl = decodeURIComponent(encodedUrl);
+          // Basic validation
+          new URL(targetUrl);
+        } else {
+          throw new Error('No URL parameter');
+        }
+      } catch (e) {
+        document.body.innerHTML = '<div style="padding: 50px; text-align: center; font-size: 1.5rem;">❌ Error: No URL found!</div>';
         return;
       }
-
-      // Initialize
+      
+      // Set up countdown
       const countdownEl = document.getElementById('countdown');
-      const skipBtn = document.getElementById('skip-btn');
-      const progressBar = document.getElementById('progress-bar');
-      let countdown = CONFIG.countdownStart;
-      let totalTime = CONFIG.countdownStart * CONFIG.countdownStep * 1000;
-      let elapsed = 0;
-
-      // Load ads
-      loadAds();
-
-      // Countdown timer
-      const timer = setInterval(() => {
-        countdown--;
-        elapsed += CONFIG.countdownStep * 1000;
+      const progressEl = document.getElementById('progress');
+      const skipBtn = document.getElementById('skip');
+      let count = CONFIG.countdownStart;
+      const totalTime = CONFIG.countdownStart * CONFIG.countdownStep * 1000;
+      let startTime = Date.now();
+      
+      const countdownInterval = setInterval(() => {
+        count--;
+        countdownEl.textContent = count;
         
-        countdownEl.textContent = countdown;
-        progressBar.style.width = `${(elapsed / totalTime) * 100}%`;
+        // Update progress bar
+        const elapsed = Date.now() - startTime;
+        const progress = (elapsed / totalTime) * 100;
+        progressEl.style.width = `${Math.min(progress, 100)}%`;
         
-        if (countdown <= 0) {
-          clearInterval(timer);
-          redirectToTarget();
+        if (count <= 0) {
+          clearInterval(countdownInterval);
+          window.location.href = targetUrl;
         }
       }, CONFIG.countdownStep * 1000);
-
-      // Skip button
-      skipBtn.addEventListener('click', redirectToTarget);
-
-      function redirectToTarget() {
-        try {
-          const decodedUrl = decodeURIComponent(targetUrl);
-          new URL(decodedUrl); // Validate URL
-          window.location.href = decodedUrl;
-        } catch (e) {
-          showError();
-        }
-      }
-
-      function showError() {
-        document.body.innerHTML = '<div class="error-message">❌ Error: No URL found!</div>';
-      }
-
-      function loadAds() {
-        const adGrid = document.getElementById('ad-grid');
-        const stickyTop = document.getElementById('sticky-top-ad');
-        const stickyBottom = document.getElementById('sticky-bottom-ad');
-        
-        // Create ad slots
-        for (let i = 0; i < CONFIG.totalAds; i++) {
-          const adSlot = document.createElement('div');
-          adSlot.className = 'ad-slot';
-          adSlot.innerHTML = `<div class="ad-label">Advertisement</div>`;
-          
-          // Create script element
-          const script = document.createElement('script');
-          script.async = true;
-          script.dataset.cfasync = 'false';
-          script.src = '//breathinggeoff.com/1b21a7aeb6541a8c010585f476d4919d/invoke.js';
-          
-          // Create container div
-          const container = document.createElement('div');
-          container.id = `container-1b21a7aeb6541a8c010585f476d4919d-${i}`;
-          
-          adSlot.appendChild(container);
-          adSlot.appendChild(script);
-          adGrid.appendChild(adSlot);
-        }
-        
-        // Add sticky ads (optional)
-        addStickyAd(stickyTop);
-        addStickyAd(stickyBottom);
-      }
       
-      function addStickyAd(container) {
+      // Skip button functionality
+      skipBtn.addEventListener('click', () => {
+        clearInterval(countdownInterval);
+        window.location.href = targetUrl;
+      });
+      
+      // Insert ads
+      const adGrid = document.getElementById('adGrid');
+      const baseId = '1b21a7aeb6541a8c010585f476d4919d';
+      
+      for (let i = 1; i <= CONFIG.totalAds; i++) {
+        const adSlot = document.createElement('div');
+        adSlot.className = 'ad-slot';
+        
+        const containerId = `container-${baseId}-${i}`;
+        adSlot.innerHTML = `<div id="${containerId}"></div>`;
+        
         const script = document.createElement('script');
         script.async = true;
         script.dataset.cfasync = 'false';
-        script.src = '//breathinggeoff.com/1b21a7aeb6541a8c010585f476d4919d/invoke.js';
+        script.src = `//breathinggeoff.com/${baseId}/invoke.js`;
         
-        const adDiv = document.createElement('div');
-        adDiv.id = `container-1b21a7aeb6541a8c010585f476d4919d-sticky`;
-        adDiv.style.width = '100%';
-        
-        container.appendChild(adDiv);
-        container.appendChild(script);
+        adSlot.appendChild(script);
+        adGrid.appendChild(adSlot);
       }
     });
   </script>
