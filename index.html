@@ -1,122 +1,180 @@
 <!DOCTYPE html>
+<!-- 
+  URL Link Generator - Creates redirect links to redirect.html
+  Host together with redirect.html in same directory
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>URL Shortener</title>
+  <title>URL Link Generator</title>
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      background: #f5f5f5;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      background-color: #f5f5f5;
     }
-    .container {
+    .card {
       background: white;
-      padding: 2rem;
-      border-radius: 10px;
+      border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 2rem;
       width: 100%;
       max-width: 500px;
     }
     h1 {
       margin-top: 0;
       color: #333;
+      font-size: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
     }
     input {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
+      padding: 0.75rem;
       border: 1px solid #ddd;
       border-radius: 4px;
-      font-size: 16px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    input:read-only {
+      background-color: #f9f9f9;
+      cursor: not-allowed;
+    }
+    .button-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
     }
     button {
-      background: #4d90fe;
-      color: white;
+      padding: 0.75rem 1.25rem;
       border: none;
-      padding: 12px 20px;
       border-radius: 4px;
+      font-size: 1rem;
       cursor: pointer;
-      font-size: 16px;
-      width: 100%;
-      margin-top: 10px;
+      flex: 1;
+      transition: background 0.2s;
     }
-    button:hover {
-      background: #357ae8;
+    button:focus {
+      outline: 2px solid #4d90fe;
     }
-    .result {
-      margin-top: 20px;
-      display: none;
+    .primary {
+      background-color: #4d90fe;
+      color: white;
     }
-    .ad-container {
-      margin: 20px 0;
-      min-height: 100px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #f9f9f9;
+    .primary:hover {
+      background-color: #357ae8;
+    }
+    .secondary {
+      background-color: #f1f1f1;
+    }
+    .secondary:hover {
+      background-color: #e1e1e1;
+    }
+    .help-text {
+      font-size: 0.875rem;
+      color: #666;
+      margin: 1rem 0 0;
+      padding: 0.5rem;
+      background-color: #f8f8f8;
       border-radius: 4px;
+    }
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>URL Shortener</h1>
-    <input type="url" id="url-input" placeholder="Enter URL (include https://)">
-    <button id="generate-btn">Generate Link</button>
+  <div class="card">
+    <h1>URL Link Generator</h1>
     
-    <div class="result" id="result">
-      <input type="text" id="short-url" readonly>
-      <button id="copy-btn">Copy Link</button>
+    <label for="original-url">Enter URL to shorten:</label>
+    <input type="url" id="original-url" placeholder="https://example.com" required>
+    
+    <button id="generate-btn" class="primary">Generate Link</button>
+    
+    <div id="result-container" class="hidden">
+      <label for="generated-link">Your redirect link:</label>
+      <input type="text" id="generated-link" readonly>
+      
+      <div class="button-group">
+        <button id="copy-btn" class="secondary">Copy</button>
+        <button id="open-btn" class="secondary">Open</button>
+      </div>
     </div>
-
-    <div class="ad-container">
-      <script async data-cfasync="false" src="//breathinggeoff.com/1b21a7aeb6541a8c010585f476d4919d/invoke.js"></script>
-      <div id="container-1b21a7aeb6541a8c010585f476d4919d"></div>
-    </div>
+    
+    <p class="help-text">
+      Tip: Include "http://" or "https://" in your URL. The generated link will redirect through our service.
+    </p>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const originalUrlInput = document.getElementById('original-url');
       const generateBtn = document.getElementById('generate-btn');
-      const urlInput = document.getElementById('url-input');
-      const resultDiv = document.getElementById('result');
-      const shortUrlInput = document.getElementById('short-url');
+      const resultContainer = document.getElementById('result-container');
+      const generatedLinkInput = document.getElementById('generated-link');
       const copyBtn = document.getElementById('copy-btn');
+      const openBtn = document.getElementById('open-btn');
 
-      generateBtn.addEventListener('click', () => {
-        const url = urlInput.value.trim();
-        if (!url) {
-          alert('Please enter a URL');
-          return;
-        }
-
-        try {
-          new URL(url); // Validate URL
-          const encodedUrl = encodeURIComponent(url);
-          const shortUrl = window.location.href.replace('index.html', 'redirect.html') + '?url=' + encodedUrl;
-          
-          shortUrlInput.value = shortUrl;
-          resultDiv.style.display = 'block';
-          shortUrlInput.select();
-        } catch {
-          alert('Invalid URL. Please include http:// or https://');
-        }
+      generateBtn.addEventListener('click', generateLink);
+      copyBtn.addEventListener('click', copyLink);
+      openBtn.addEventListener('click', openLink);
+      
+      // Allow pressing Enter in input to generate
+      originalUrlInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') generateLink();
       });
 
-      copyBtn.addEventListener('click', () => {
-        shortUrlInput.select();
+      function generateLink() {
+        const url = originalUrlInput.value.trim();
+        
+        try {
+          // Validate URL
+          new URL(url);
+          
+          // Encode for URL parameter
+          const encodedUrl = encodeURIComponent(url);
+          const redirectUrl = `redirect.html?url=${encodedUrl}`;
+          
+          // Show result
+          generatedLinkInput.value = window.location.href.replace('index.html', redirectUrl);
+          resultContainer.classList.remove('hidden');
+          generatedLinkInput.select();
+        } catch (e) {
+          if (confirm('This doesn\'t look like a valid URL. Generate anyway?')) {
+            const encodedUrl = encodeURIComponent(url);
+            const redirectUrl = `redirect.html?url=${encodedUrl}`;
+            generatedLinkInput.value = window.location.href.replace('index.html', redirectUrl);
+            resultContainer.classList.remove('hidden');
+            generatedLinkInput.select();
+          }
+        }
+      }
+
+      function copyLink() {
+        generatedLinkInput.select();
         document.execCommand('copy');
         copyBtn.textContent = 'Copied!';
         setTimeout(() => {
-          copyBtn.textContent = 'Copy Link';
+          copyBtn.textContent = 'Copy';
         }, 2000);
-      });
+      }
+
+      function openLink() {
+        window.open(generatedLinkInput.value, '_blank');
+      }
     });
   </script>
 </body>
