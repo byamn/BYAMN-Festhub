@@ -1,372 +1,5 @@
-<!DOCTYPE html>
-<!-- 
-  Link Generator - Creates redirect links to redirect.html
-  Host this with redirect.html in same directory for full functionality
--->
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickLink - URL Shortener</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #4361ee;
-      --primary-dark: #3a56d4;
-      --secondary: #3f37c9;
-      --accent: #4895ef;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --success: #4cc9f0;
-      --danger: #f72585;
-      --border-radius: 12px;
-      --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      --transition: all 0.3s ease;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      color: var(--dark);
-      min-height: 100vh;
-      padding: 2rem;
-      line-height: 1.6;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    header {
-      padding: 2rem 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    .logo-icon {
-      font-size: 2.2rem;
-    }
-
-    nav ul {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-
-    nav a {
-      color: var(--dark);
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-      position: relative;
-    }
-
-    nav a:hover {
-      color: var(--primary);
-    }
-
-    nav a::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--primary);
-      transition: var(--transition);
-    }
-
-    nav a:hover::after {
-      width: 100%;
-    }
-
-    .hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 4rem 0;
-    }
-
-    .hero h1 {
-      font-size: 3.5rem;
-      margin-bottom: 1.5rem;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      line-height: 1.2;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      max-width: 700px;
-      margin-bottom: 3rem;
-      color: #555;
-    }
-
-    .card {
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      padding: 3rem;
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      transition: var(--transition);
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.8rem;
-      font-weight: 500;
-      color: var(--dark);
-    }
-
-    input {
-      width: 100%;
-      padding: 1rem;
-      border: 2px solid #e9ecef;
-      border-radius: var(--border-radius);
-      font-size: 1rem;
-      transition: var(--transition);
-    }
-
-    input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
-    }
-
-    input[readonly] {
-      background: #f8f9fa;
-      cursor: not-allowed;
-    }
-
-    .btn {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 1rem 2rem;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: 500;
-      transition: var(--transition);
-      text-align: center;
-    }
-
-    .btn:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-    }
-
-    .btn:disabled {
-      background: #adb5bd;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-secondary {
-      background: white;
-      color: var(--primary);
-      border: 2px solid var(--primary);
-    }
-
-    .btn-secondary:hover {
-      background: #f8f9fa;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .help-text {
-      font-size: 0.9rem;
-      color: #6c757d;
-      margin-top: 0.5rem;
-    }
-
-    .result {
-      margin-top: 2rem;
-      display: none;
-      animation: fadeIn 0.5s ease;
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin: 5rem 0;
-    }
-
-    .feature-card {
-      background: white;
-      border-radius: var(--border-radius);
-      padding: 2rem;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-      transition: var(--transition);
-    }
-
-    .feature-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .feature-icon {
-      font-size: 2.5rem;
-      color: var(--primary);
-      margin-bottom: 1.5rem;
-    }
-
-    .feature-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: var(--dark);
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem 0;
-      margin-top: 3rem;
-      color: #6c757d;
-      border-top: 1px solid #e9ecef;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 768px) {
-      header {
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-
-      nav ul {
-        gap: 1.5rem;
-      }
-
-      .hero h1 {
-        font-size: 2.5rem;
-      }
-
-      .hero p {
-        font-size: 1rem;
-      }
-
-      .card {
-        padding: 2rem;
-      }
-
-      .button-group {
-        flex-direction: column;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <a href="#" class="logo">
-        <span class="logo-icon">🔗</span>
-        <span>QuickLink</span>
-      </a>
-      <nav>
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Features</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
-      </nav>
-    </header>
-
-    <main>
-      <section class="hero">
-        <h1>Create Clean Redirect Links in Seconds</h1>
-        <p>Generate simple, ad-free redirect links for sharing. Perfect for marketers, content creators, and anyone who needs clean URLs.</p>
-        
-        <div class="card">
-          <div class="form-group">
-            <label for="url">Enter your long URL</label>
-            <input type="url" id="url" placeholder="https://example.com/very-long-url" required>
-            <div class="help-text">Must include protocol (http:// or https://)</div>
-          </div>
-          <button id="generate" class="btn">Generate Link</button>
-          
-          <div class="result" id="result">
-            <div class="form-group">
-              <label for="generated-url">Your redirect link:</label>
-              <input type="text" id="generated-url" readonly>
-              <div class="button-group">
-                <button id="copy" class="btn btn-secondary">Copy Link</button>
-                <button id="open" class="btn">Open Link</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="features">
-        <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3>Lightning Fast</h3>
-          <p>Generate redirect links instantly with our optimized system. No waiting, no delays.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🔒</div>
-          <h3>Secure</h3>
-          <p>All links are properly encoded and validated to ensure safe redirection.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🆓</div>
-          <h3>Completely Free</h3>
-          <p>No hidden charges or premium plans. Enjoy all features without paying a dime.</p>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <p>&copy; 2023 QuickLink. All rights reserved.</p>
-    </footer>
-  </div>
-
-  <script>
+<!-- In your index.html file, replace the script section with this: -->
+<script>
     document.addEventListener('DOMContentLoaded', () => {
       const urlInput = document.getElementById('url');
       const generateBtn = document.getElementById('generate');
@@ -377,13 +10,23 @@
       
       generateBtn.addEventListener('click', () => {
         try {
-          const url = new URL(urlInput.value);
+          // First validate the URL
+          let inputUrl = urlInput.value.trim();
           
-          // Basic validation passed
-          const encodedUrl = encodeURIComponent(url.href);
-          const redirectUrl = `redirect.html?url=${encodedUrl}`;
+          // Add https:// if missing
+          if (!inputUrl.startsWith('http://') && !inputUrl.startsWith('https://')) {
+            inputUrl = 'https://' + inputUrl;
+          }
           
-          generatedUrl.value = window.location.href.replace('index.html', redirectUrl);
+          // Validate URL
+          new URL(inputUrl); // This will throw if invalid
+          
+          // Encode and create redirect URL
+          const encodedUrl = encodeURIComponent(inputUrl);
+          const currentPath = window.location.href.replace('index.html', '');
+          const redirectUrl = `${currentPath}redirect.html?url=${encodedUrl}`;
+          
+          generatedUrl.value = redirectUrl;
           resultDiv.style.display = 'block';
           
           // Scroll to result
@@ -392,8 +35,8 @@
           const shouldProceed = confirm('This doesn\'t look like a valid URL. Generate link anyway?');
           if (shouldProceed) {
             const encodedUrl = encodeURIComponent(urlInput.value);
-            const redirectUrl = `redirect.html?url=${encodedUrl}`;
-            generatedUrl.value = window.location.href.replace('index.html', redirectUrl);
+            const currentPath = window.location.href.replace('index.html', '');
+            generatedUrl.value = `${currentPath}redirect.html?url=${encodedUrl}`;
             resultDiv.style.display = 'block';
             resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
@@ -421,6 +64,4 @@
         });
       });
     });
-  </script>
-</body>
-</html>
+</script>
