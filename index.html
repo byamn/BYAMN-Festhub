@@ -800,15 +800,157 @@
 </head>
 <body>
     <!-- Header Section with H1 for SEO -->
-    <header class="header" role="banner">
-        <div class="container">
-            <h1 class="logo">
-                <i class="fas fa-heart" aria-hidden="true"></i>
-                <span>BYAMN Festhub</span>
-            </h1>
-            <p class="tagline">India's #1 platform for beautiful festival wishes and greeting cards</p>
-        </div>
-    </header>
+   <!-- Ultra-Compact Premium Header -->
+<header class="fx-header">
+  <div class="fx-header-inner">
+    <div class="fx-logo-group">
+      <img src="https://byamn.vercel.app/logo.png" alt="BYAMN" class="fx-logo">
+      <span class="fx-brand">
+        <span class="fx-brand-name">BYAMN Festhub</span>
+        <span class="fx-brand-tag">Festivals</span>
+      </span>
+    </div>
+    <div class="fx-nav-pills">
+      <button class="fx-pill active" aria-label="Diwali">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="currentColor"/>
+          <path d="M12 3V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M3 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M19 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="fx-pill" aria-label="Holi">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="currentColor"/>
+          <path d="M16 8L19 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M8 8L5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M8 16L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M16 16L19 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="fx-header-accent"></div>
+</header>
+
+<style>
+  /* Ultra-Compact Styles */
+  .fx-header {
+    --fx-primary: #7C3AED;
+    --fx-accent: #EC4899;
+    --fx-light: #F5F3FF;
+    height: 56px;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  
+  .fx-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .fx-logo-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .fx-logo {
+    height: 28px;
+    width: auto;
+    transition: transform 0.2s ease;
+  }
+  
+  .fx-logo:hover {
+    transform: scale(1.1);
+  }
+  
+  .fx-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  
+  .fx-brand-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--fx-primary);
+    letter-spacing: -0.3px;
+  }
+  
+  .fx-brand-tag {
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--fx-accent);
+    background: rgba(236, 72, 153, 0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  
+  .fx-nav-pills {
+    display: flex;
+    gap: 6px;
+  }
+  
+  .fx-pill {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fx-light);
+    color: var(--fx-primary);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .fx-pill:hover {
+    background: rgba(124, 58, 237, 0.1);
+    transform: translateY(-1px);
+  }
+  
+  .fx-pill.active {
+    background: var(--fx-primary);
+    color: white;
+    box-shadow: 0 2px 6px rgba(124, 58, 237, 0.3);
+  }
+  
+  .fx-header-accent {
+    height: 2px;
+    background: linear-gradient(90deg, var(--fx-primary), var(--fx-accent));
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0.8;
+  }
+  
+  @media (max-width: 768px) {
+    .fx-header {
+      height: 52px;
+    }
+    
+    .fx-brand-name {
+      font-size: 1rem;
+    }
+    
+    .fx-pill {
+      width: 28px;
+      height: 28px;
+    }
+  }
+</style>
     
     <main class="container" role="main">
         <!-- Breadcrumb Schema -->
