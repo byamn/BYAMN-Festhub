@@ -136,10 +136,11 @@
         .fx-nav-pills {
             display: flex;
             gap: 6px;
+            align-items: center;
         }
         
         .fx-pill {
-            width: 32px;
+            min-width: 32px;
             height: 32px;
             border-radius: 8px;
             display: flex;
@@ -150,6 +151,10 @@
             border: none;
             cursor: pointer;
             transition: all 0.2s ease;
+            padding: 0 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
         }
         
         .fx-pill:hover {
@@ -161,6 +166,91 @@
             background: var(--fx-primary);
             color: white;
             box-shadow: 0 2px 6px rgba(124, 58, 237, 0.3);
+        }
+        
+        .fx-nav-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            padding: 8px 0;
+            min-width: 200px;
+            z-index: 1000;
+            margin-top: 8px;
+        }
+        
+        .fx-nav-menu.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .fx-nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .fx-nav-item:last-child {
+            border-bottom: none;
+        }
+        
+        .fx-nav-item:hover {
+            background: var(--fx-light);
+            color: var(--fx-primary);
+        }
+        
+        .fx-nav-item i {
+            margin-right: 12px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .fx-menu-toggle {
+            position: relative;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Quick Access Navigation */
+        .fx-quick-nav {
+            display: flex;
+            gap: 4px;
+            margin-right: 12px;
+        }
+        
+        .fx-quick-pill {
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(124, 58, 237, 0.08);
+            color: var(--fx-primary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        
+        .fx-quick-pill:hover {
+            background: var(--fx-primary);
+            color: white;
+            transform: translateY(-1px);
         }
         
         .fx-header-accent {
@@ -368,6 +458,39 @@
             font-size: 0.8rem;
             font-weight: 600;
             z-index: 2;
+        }
+        
+        .card-favorite {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+            color: #999;
+        }
+        
+        .card-favorite:hover {
+            background: white;
+            transform: scale(1.1);
+            color: #EF4444;
+        }
+        
+        .card-favorite.active {
+            background: #EF4444;
+            color: white;
+        }
+        
+        .card-favorite.active:hover {
+            background: #DC2626;
         }
         
         .hindu-badge {
@@ -1007,6 +1130,63 @@
             }
         }
         
+        /* Navigation Badge Styles */
+        .fx-pill-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #EF4444;
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 600;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        
+        .fx-pill {
+            position: relative;
+        }
+        
+        /* Breadcrumb Navigation */
+        .fx-breadcrumb {
+            background: rgba(124, 58, 237, 0.05);
+            padding: 8px 0;
+            margin-bottom: 1rem;
+        }
+        
+        .fx-breadcrumb-list {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        .fx-breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .fx-breadcrumb-link {
+            color: var(--fx-primary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .fx-breadcrumb-link:hover {
+            color: var(--fx-accent);
+        }
+        
+        .fx-breadcrumb-separator {
+            color: #D1D5DB;
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .fx-header {
@@ -1018,8 +1198,18 @@
             }
             
             .fx-pill {
-                width: 28px;
+                min-width: 28px;
                 height: 28px;
+                padding: 0 6px;
+            }
+            
+            .fx-quick-nav {
+                display: none;
+            }
+            
+            .fx-nav-menu {
+                right: -8px;
+                min-width: 180px;
             }
             
             .categories {
@@ -1130,28 +1320,88 @@
           </span>
         </div>
         <div class="fx-nav-pills">
-          <button class="fx-pill active" aria-label="Diwali">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="currentColor"/>
-              <path d="M12 3V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M12 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M3 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M19 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+          <!-- Quick Access Navigation -->
+          <div class="fx-quick-nav">
+            <a href="#diwali" class="fx-quick-pill" data-category="hindu">Diwali</a>
+            <a href="#holi" class="fx-quick-pill" data-category="hindu">Holi</a>
+            <a href="#christmas" class="fx-quick-pill" data-category="christian">Christmas</a>
+          </div>
+          
+          <!-- Search Button -->
+          <button class="fx-pill" id="headerSearchBtn" aria-label="Search" title="Search Festivals">
+            <i class="fas fa-search"></i>
           </button>
-          <button class="fx-pill" aria-label="Holi">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="currentColor"/>
-              <path d="M16 8L19 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M8 8L5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M8 16L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M16 16L19 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+          
+          <!-- Favorites Button -->
+          <button class="fx-pill" id="favoritesBtn" aria-label="Favorites" title="Your Favorites">
+            <i class="fas fa-heart"></i>
+            <span class="fx-pill-badge" id="favoritesCount">0</span>
           </button>
+          
+          <!-- Notifications -->
+          <button class="fx-pill" id="notificationsBtn" aria-label="Notifications" title="Festival Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="fx-pill-badge" id="notificationCount">3</span>
+          </button>
+          
+          <!-- Main Menu Toggle -->
+          <div class="fx-menu-toggle">
+            <button class="fx-pill" id="menuToggle" aria-label="Menu" title="More Options">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="fx-nav-menu" id="navMenu">
+              <a href="#about" class="fx-nav-item">
+                <i class="fas fa-info-circle"></i>
+                About Us
+              </a>
+              <a href="#categories" class="fx-nav-item">
+                <i class="fas fa-th-large"></i>
+                All Categories
+              </a>
+              <a href="#calendar" class="fx-nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                Festival Calendar
+              </a>
+              <a href="#trending" class="fx-nav-item">
+                <i class="fas fa-fire"></i>
+                Trending
+              </a>
+              <a href="file.html" class="fx-nav-item">
+                <i class="fas fa-link"></i>
+                Link Shortener
+              </a>
+              <a href="#help" class="fx-nav-item">
+                <i class="fas fa-question-circle"></i>
+                Help & Support
+              </a>
+              <a href="#contact" class="fx-nav-item">
+                <i class="fas fa-envelope"></i>
+                Contact
+              </a>
+            </div>
+          </div>
         </div>
       </div>
       <div class="fx-header-accent"></div>
     </header>
+    
+    <!-- Breadcrumb Navigation -->
+    <nav class="fx-breadcrumb" aria-label="Breadcrumb">
+        <div class="container">
+            <ol class="fx-breadcrumb-list">
+                <li class="fx-breadcrumb-item">
+                    <a href="#" class="fx-breadcrumb-link">
+                        <i class="fas fa-home"></i>
+                        Home
+                    </a>
+                </li>
+                <li class="fx-breadcrumb-item">
+                    <span class="fx-breadcrumb-separator">/</span>
+                    <span id="currentPageBreadcrumb">All Festivals</span>
+                </li>
+            </ol>
+        </div>
+    </nav>
     
     <main class="container">
         <!-- Search Section -->
@@ -2161,6 +2411,17 @@
         const searchBtn = document.getElementById('searchBtn');
         const newsletterForm = document.getElementById('newsletterForm');
         
+        // Navigation Elements
+        const headerSearchBtn = document.getElementById('headerSearchBtn');
+        const favoritesBtn = document.getElementById('favoritesBtn');
+        const notificationsBtn = document.getElementById('notificationsBtn');
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+        const quickNavPills = document.querySelectorAll('.fx-quick-pill');
+        const currentPageBreadcrumb = document.getElementById('currentPageBreadcrumb');
+        const favoritesCount = document.getElementById('favoritesCount');
+        const notificationCount = document.getElementById('notificationCount');
+        
         // Modal Elements
         const festivalModal = document.getElementById('festivalModal');
         const modalClose = document.getElementById('modalClose');
@@ -2183,14 +2444,23 @@
         let currentRating = 0;
         let currentFestival = null;
         let scrollInterval = null;
+        let favorites = JSON.parse(localStorage.getItem('festhub-favorites') || '[]');
+        let notifications = [
+            { id: 1, title: 'Diwali is coming!', message: 'Only 30 days left', type: 'festival' },
+            { id: 2, title: 'New templates added', message: 'Check out Christmas cards', type: 'update' },
+            { id: 3, title: 'Your review was liked', message: 'Someone liked your Holi review', type: 'social' }
+        ];
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
             renderWebsites();
             renderEvents();
             setupEventListeners();
+            setupNavigationEventListeners();
             checkTodayFestivals();
             startAutoScroll();
+            updateFavoritesCount();
+            updateNotificationCount();
             
             // Track page view
             if (typeof gtag !== 'undefined') {
@@ -2251,6 +2521,9 @@
                 websiteCard.innerHTML = `
                     <div class="card-image" style="background-image: url('${website.image}')" aria-label="${website.title}">
                         <span class="card-badge ${badgeClass}">${website.category.charAt(0).toUpperCase() + website.category.slice(1)}</span>
+                        <button class="card-favorite ${favorites.find(f => f.id === website.id) ? 'active' : ''}" onclick="toggleFavorite(${website.id})" title="Add to favorites">
+                            <i class="fas fa-heart"></i>
+                        </button>
                     </div>
                     <div class="card-content">
                         <h3 class="card-title">${website.title}</h3>
@@ -2451,6 +2724,187 @@
                 closeReviewModal();
             });
         }
+        
+        // Setup navigation event listeners
+        function setupNavigationEventListeners() {
+            // Header search button
+            headerSearchBtn.addEventListener('click', function() {
+                searchInput.focus();
+                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+            
+            // Quick navigation pills
+            quickNavPills.forEach(pill => {
+                pill.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const category = this.dataset.category;
+                    
+                    // Update active category
+                    categoryBtns.forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.dataset.category === category) {
+                            btn.classList.add('active');
+                        }
+                    });
+                    
+                    currentCategory = category;
+                    updateBreadcrumb(this.textContent);
+                    renderWebsites();
+                    
+                    // Scroll to categories section
+                    document.querySelector('.categories-section').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                });
+            });
+            
+            // Favorites button
+            favoritesBtn.addEventListener('click', function() {
+                showFavoritesModal();
+            });
+            
+            // Notifications button
+            notificationsBtn.addEventListener('click', function() {
+                showNotificationsDropdown();
+            });
+            
+            // Menu toggle
+            menuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navMenu.classList.toggle('show');
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!navMenu.contains(e.target) && e.target !== menuToggle) {
+                    navMenu.classList.remove('show');
+                }
+            });
+            
+            // Menu item clicks
+            document.querySelectorAll('.fx-nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('href');
+                    
+                    if (href === '#categories') {
+                        document.querySelector('.categories-section').scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    } else if (href === '#calendar') {
+                        document.querySelector('.events-section').scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    } else if (href === '#trending') {
+                        currentCategory = 'all';
+                        currentSearch = '';
+                        searchInput.value = '';
+                        updateBreadcrumb('Trending');
+                        renderWebsites();
+                    } else if (href === 'file.html') {
+                        window.open('file.html', '_blank');
+                    } else {
+                        // Handle other navigation items
+                        console.log('Navigating to:', href);
+                        alert(`Navigating to ${this.textContent.trim()}`);
+                    }
+                    
+                    navMenu.classList.remove('show');
+                });
+            });
+        }
+        
+        // Update breadcrumb
+        function updateBreadcrumb(pageName) {
+            currentPageBreadcrumb.textContent = pageName;
+        }
+        
+        // Update favorites count
+        function updateFavoritesCount() {
+            favoritesCount.textContent = favorites.length;
+            if (favorites.length === 0) {
+                favoritesCount.style.display = 'none';
+            } else {
+                favoritesCount.style.display = 'flex';
+            }
+        }
+        
+        // Update notification count
+        function updateNotificationCount() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            notificationCount.textContent = unreadCount;
+            if (unreadCount === 0) {
+                notificationCount.style.display = 'none';
+            } else {
+                notificationCount.style.display = 'flex';
+            }
+        }
+        
+        // Show favorites modal
+        function showFavoritesModal() {
+            if (favorites.length === 0) {
+                alert('You haven\'t added any festivals to favorites yet!\n\nClick the heart icon on any festival card to add it to your favorites.');
+                return;
+            }
+            
+            const favoriteItems = favorites.map(fav => `• ${fav.title}`).join('\n');
+            alert(`Your Favorite Festivals:\n\n${favoriteItems}`);
+        }
+        
+        // Show notifications dropdown
+        function showNotificationsDropdown() {
+            const notificationList = notifications.map(notif => 
+                `• ${notif.title}: ${notif.message}`
+            ).join('\n');
+            
+            alert(`Recent Notifications:\n\n${notificationList}`);
+            
+            // Mark all as read
+            notifications.forEach(n => n.read = true);
+            updateNotificationCount();
+        }
+        
+        // Add to favorites
+        function addToFavorites(festival) {
+            if (!favorites.find(f => f.id === festival.id)) {
+                favorites.push(festival);
+                localStorage.setItem('festhub-favorites', JSON.stringify(favorites));
+                updateFavoritesCount();
+                return true;
+            }
+            return false;
+        }
+        
+        // Remove from favorites
+        function removeFromFavorites(festivalId) {
+            favorites = favorites.filter(f => f.id !== festivalId);
+            localStorage.setItem('festhub-favorites', JSON.stringify(favorites));
+            updateFavoritesCount();
+        }
+        
+        // Global toggle favorite function (called from card onclick)
+        function toggleFavorite(festivalId) {
+            const festival = websitesData.find(w => w.id === festivalId);
+            if (!festival) return;
+            
+            const favoriteBtn = document.querySelector(`[onclick="toggleFavorite(${festivalId})"]`);
+            
+            if (favorites.find(f => f.id === festivalId)) {
+                removeFromFavorites(festivalId);
+                favoriteBtn.classList.remove('active');
+                favoriteBtn.title = 'Add to favorites';
+            } else {
+                addToFavorites(festival);
+                favoriteBtn.classList.add('active');
+                favoriteBtn.title = 'Remove from favorites';
+            }
+        }
+        
+        // Make toggleFavorite globally accessible
+        window.toggleFavorite = toggleFavorite;
 
         // Perform search
         function performSearch() {
