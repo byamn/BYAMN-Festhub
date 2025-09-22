@@ -1,0 +1,64 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+      
+    - name: Optimize for deployment
+      run: |
+        echo "Preparing files for deployment..."
+        
+        # Create a deployment directory
+        mkdir -p deploy
+        
+        # Copy all HTML files
+        cp *.html deploy/ 2>/dev/null || true
+        
+        # Copy assets if they exist
+        if [ -d "assets" ]; then
+          cp -r assets deploy/
+        fi
+        
+        # Copy logo if it exists
+        cp logo.png deploy/ 2>/dev/null || true
+        
+        # Copy other static files
+        cp *.ico deploy/ 2>/dev/null || true
+        cp *.txt deploy/ 2>/dev/null || true
+        
+        # List files being deployed
+        echo "Files to be deployed:"
+        find deploy -type f
+        
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: './deploy'
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
