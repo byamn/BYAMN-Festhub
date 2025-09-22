@@ -19,7 +19,7 @@ Please do not report security vulnerabilities through public GitHub issues, disc
 
 ### 2. Report Privately
 
-Instead, please send an email to: **security@byamn-festhub.com** (or create a private security advisory on GitHub)
+Instead, please send an email to: **dyhardeveloper@gmail.com** (or create a private security advisory on GitHub)
 
 ### 3. Include Details
 
@@ -95,7 +95,8 @@ We regularly monitor these dependencies for security updates.
 ## Contact
 
 For any security-related questions or concerns:
-- Email: security@byamn-festhub.com
+- Email: dyhardeveloper@gmail.com
 - GitHub Security Advisories: [Create Advisory](https://github.com/yourusername/byamn-festhub/security/advisories/new)
+
 
 Thank you for helping keep BYAMN Festhub secure! 🔒
