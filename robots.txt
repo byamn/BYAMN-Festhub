@@ -1,0 +1,44 @@
+<<<<<<< HEAD
+User-agent: *
+Allow: /
+
+# Sitemap location (update with your actual domain)
+Sitemap: https://yourusername.github.io/byamn-festhub/sitemap.xml
+
+# Specific pages
+Allow: /index.html
+Allow: /Christmas.html
+Allow: /Janmashtami.html
+
+# Allow assets
+Allow: /assets/
+Allow: /logo.png
+
+# Disallow utility pages from search engines
+Disallow: /file.html
+Disallow: /redirect.html
+
+# SEO optimizations
+=======
+User-agent: *
+Allow: /
+
+# Sitemap location (update with your actual domain)
+Sitemap: https://yourusername.github.io/byamn-festhub/sitemap.xml
+
+# Specific pages
+Allow: /index.html
+Allow: /Christmas.html
+Allow: /Janmashtami.html
+
+# Allow assets
+Allow: /assets/
+Allow: /logo.png
+
+# Disallow utility pages from search engines
+Disallow: /file.html
+Disallow: /redirect.html
+
+# SEO optimizations
+>>>>>>> origin/main
+Crawl-delay: 1
