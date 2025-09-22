@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "title": "🎄 Christmas Collection Live!",
+    "message": "Explore our amazing collection of Christmas wishes and greeting cards. Perfect for sharing joy with your loved ones this holiday season.",
+    "type": "success",
+    "timestamp": "2024-12-20T10:30:00Z",
+    "image": "https://images.unsplash.com/photo-1512389098783-66b81f86e199?w=400&h=200&fit=crop&auto=format",
+    "link": "Christmas.html",
+    "read": false
+  },
+  {
+    "id": 2,
+    "title": "⚠️ Website Maintenance",
+    "message": "Scheduled maintenance will occur on December 25th from 2:00 AM to 4:00 AM EST. Some features may be temporarily unavailable.",
+    "type": "warning",
+    "timestamp": "2024-12-18T14:15:00Z",
+    "read": false
+  },
+  {
+    "id": 3,
+    "title": "🎊 New Year Collection Coming Soon",
+    "message": "Get ready for 2025! Our New Year wishes collection will be available starting December 26th. Be the first to share celebratory messages!",
+    "type": "info",
+    "timestamp": "2024-12-17T09:45:00Z",
+    "image": "https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=400&h=200&fit=crop&auto=format",
+    "link": "#new-year-section",
+    "read": false
+  },
+  {
+    "id": 4,
+    "title": "🚨 Security Update Required",
+    "message": "Please update your browser for the best security and performance. We recommend using the latest version of Chrome, Firefox, or Safari.",
+    "type": "error",
+    "timestamp": "2024-12-16T16:20:00Z",
+    "read": true
+  },
+  {
+    "id": 5,
+    "title": "🎁 Special Offer Alert",
+    "message": "Premium templates are now free for all users until December 31st! Upgrade your festival wishes with beautiful designs.",
+    "type": "success",
+    "timestamp": "2024-12-15T11:30:00Z",
+    "image": "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=200&fit=crop&auto=format",
+    "link": "file.html",
+    "read": true
+  },
+  {
+    "id": 6,
+    "title": "📱 Mobile App Beta",
+    "message": "Join our mobile app beta testing program! Experience BYAMN Festhub on your smartphone with exclusive features.",
+    "type": "info",
+    "timestamp": "2024-12-14T08:00:00Z",
+    "read": true
+  },
+  {
+    "id": 7,
+    "title": "🕉️ Diwali Wishes Popular",
+    "message": "Your Diwali wishes have been viewed over 1000 times! Thank you for spreading joy and light during the festival season.",
+    "type": "success",
+    "timestamp": "2024-12-13T19:45:00Z",
+    "read": true
+  },
+  {
+    "id": 8,
+    "title": "🔄 Performance Improvements",
+    "message": "We've made significant improvements to loading times and overall performance. Enjoy a faster, smoother experience!",
+    "type": "info",
+    "timestamp": "2024-12-12T13:20:00Z",
+    "read": true
+  }
+]
