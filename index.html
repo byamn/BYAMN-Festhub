@@ -1857,15 +1857,31 @@
     
     <main class="container">
         <!-- Search Section -->
-        <section class="search-section" aria-label="Search festival wishes">
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search for Diwali, Eid, Christmas wishes..." id="searchInput" aria-label="Search festival wishes">
-                <button class="search-btn" id="searchBtn" aria-label="Search">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </section>
-        
+  <section class="search-section" aria-label="Search festival wishes">
+  <div class="search-container">
+    <input 
+      type="text" 
+      class="search-input" 
+      placeholder="Search for Diwali, Eid, Christmas wishes..." 
+      id="searchInput" 
+      aria-label="Search festival wishes"
+    >
+    <button class="search-btn" id="searchBtn" aria-label="Search">
+      <i class="fas fa-search"></i>
+    </button>
+  </div>
+
+  <!-- Back to Home Button (visible after search) -->
+  <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1rem;">
+    <button 
+      id="backHomeBtn" 
+      style="display:none; padding:0.7rem 1.5rem; border-radius:8px; background:var(--primary); color:white; border:none; font-weight:500; cursor:pointer; box-shadow:0 2px 8px rgba(139,92,246,0.08);"
+    >
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+  </div>
+</section>
+
         <!-- Categories Section -->
         <section class="categories-section" aria-labelledby="categories-heading">
             <h2 id="categories-heading" class="section-title">Browse Festival Categories</h2>
@@ -2904,6 +2920,29 @@
         const ratingStars = document.getElementById('ratingStars');
         const reviewText = document.getElementById('reviewText');
         const submitReview = document.getElementById('submitReview');
+
+            // Show Back button after search
+            const backHomeBtn = document.getElementById('backHomeBtn');
+
+            function showBackButton() {
+            backHomeBtn.style.display = 'inline-block';
+            }
+            function hideBackButton() {
+            backHomeBtn.style.display = 'none';
+            }
+            searchBtn.addEventListener('click', function() {
+            if (searchInput.value.trim()) showBackButton();
+            });
+            searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && searchInput.value.trim()) showBackButton();
+            });
+            backHomeBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            hideBackButton();
+            // Reset search and re-render homepage content
+            if (typeof performSearch === 'function') performSearch();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
 
         // Current filter state
         let currentCategory = 'all';
