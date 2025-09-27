@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-
-
-We’re participating in Hacktoberfest! 🎉
-- Repo topic: `hacktoberfest`
-- Labels to look for: `good first issue`, `help wanted`, `hacktoberfest`
-- See CONTRIBUTING.md for how to contribute.
-
-
 
 # BYAMN Festhub 🎉
 
@@ -374,3 +365,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 >>>>>>> origin/main
 ⭐ **Star this repository if you find it helpful!**
+
