@@ -1,4 +1,13 @@
 <<<<<<< HEAD
+
+
+We’re participating in Hacktoberfest! 🎉
+- Repo topic: `hacktoberfest`
+- Labels to look for: `good first issue`, `help wanted`, `hacktoberfest`
+- See CONTRIBUTING.md for how to contribute.
+
+
+
 # BYAMN Festhub 🎉
 
 **Create & Share Beautiful Festival Greeting Cards for All Occasions**
@@ -361,6 +370,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Made with ❤️ for spreading festival joy worldwide**
+
 
 >>>>>>> origin/main
 ⭐ **Star this repository if you find it helpful!**
